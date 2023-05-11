@@ -1,12 +1,9 @@
 import React from 'react';
-import { Button, StatusBar, StyleSheet, Text, View } from 'react-native';
-import { TouchableButton } from '../components/TouchableButton';
-import { globalColors } from '../theme/appTheme';
-import { StackScreenProps } from '@react-navigation/stack';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView, StatusBar, Text, View, StyleSheet} from 'react-native';
+import {TouchableButton} from '../components/TouchableButton';
+import {globalColors} from '../theme/appTheme';
 
-
-export const HomeScreen = () => {
+export const HomeStudentScreen = () => {
   return (
     <SafeAreaView
       style={{
@@ -36,25 +33,25 @@ export const HomeScreen = () => {
           </Text>
         </View>
         <View style={styles.container}>
-          <TouchableButton iconName="location-on" textButton="Ubicacion" />
-          <TouchableButton iconName="forum" textButton="Comunicados" />
-          <TouchableButton iconName="groups" textButton="Redes Sociales" />
           <TouchableButton
-            iconName="device-unknown"
-            textButton="Upds Responde"
+            iconName="laptop-mac"
+            textButton="Plataformas Aprendizaje"
+          />
+          <TouchableButton iconName="language" textButton="Updsnet" />
+          <TouchableButton
+            iconName="library-books"
+            textButton="Tutoriales Upds"
           />
           <TouchableButton
-            iconName="engineering"
-            textButton="Test Vocacional"
+            iconName="auto-stories"
+            textButton="Bliblioteca UPDS"
           />
+          <TouchableButton iconName="table-view" textButton="Proyecciones" />
         </View>
       </View>
     </SafeAreaView>
   );
 };
-
-// Carrusel banners
-// https://www.npmjs.com/package/react-native-snap-carousel
 
 const styles = StyleSheet.create({
   container: {

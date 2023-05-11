@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "702085190161",
+    "project_id": "test-deb6a",
+    "storage_bucket": "test-deb6a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:702085190161:android:ec4a1500ff4df68fd197b0",
+        "android_client_info": {
+          "package_name": "com.updsadminapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "702085190161-ud1c2bc4c11g71i4fep0mor42tk43aav.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoH7gWe2T4pxNDKkfLTBRI_qCKhN8WhLA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "702085190161-ud1c2bc4c11g71i4fep0mor42tk43aav.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
