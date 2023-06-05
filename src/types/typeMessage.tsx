@@ -6,4 +6,6 @@ export type Message = {
   message: string;
   date: Timestamp;
   isSent: boolean;
+  device: string;
+  uname: string;
 };

@@ -4,11 +4,14 @@ import { TouchableButton } from '../components/TouchableButton';
 import { globalColors } from '../theme/appTheme';
 import { StackScreenProps } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 export const HomeScreen = () => {
   return (
-    <SafeAreaView
+    <ScrollView
+    showsVerticalScrollIndicator={false}>
+      <SafeAreaView
       style={{
         backgroundColor: globalColors.primary,
         paddingTop: StatusBar.currentHeight,
@@ -50,12 +53,9 @@ export const HomeScreen = () => {
         </View>
       </View>
     </SafeAreaView>
+    </ScrollView>
   );
 };
-
-// Carrusel banners
-// https://www.npmjs.com/package/react-native-snap-carousel
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -7,17 +7,99 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
+  Button,
 } from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {globalColors} from '../theme/appTheme';
+import {FaqModal} from '../components/FaqModal';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 }
+const MacCard: React.FC<{title: string; detail: string}> = ({
+  title,
+  detail,
+}) => {
+  return (
+    <View style={styles.cardContainer}>
+      <View style={styles.windowContainer}>
+        <View style={styles.titleBar}>
+          <View style={styles.titleBarButton} />
+          <View style={styles.titleBarButton} />
+          <View style={styles.titleBarButton} />
+        </View>
+        <View style={styles.content}>
+          <Text style={styles.cardTitle}>{title}</Text>
+          <Text style={styles.cardText}>{detail}</Text>
+        </View>
+      </View>
+    </View>
+  );
+};
 
 export const FaqScreen = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [tiel, setTitle] = useState('');
+  const [content, setContent] = useState('');
+
+  const handleOpenModal = () => {
+    setModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+
+  const lista = [
+    {
+      title: '¿Hasta qué fecha puedo programar mi materia?',
+      detail:
+        'EL tiempo máximo para programar materia es hasta cuatro días desde que inicia el módulo.',
+    },
+    {
+      title: '¿Cómo puedo programar mi materia?',
+      detail:
+        'Debe visitar el sitio: portal.upds.edu.bo/updsnet luego deberá ingresar a nuestra plataforma con el usuario de Microsoft office 365.',
+    },
+    {
+      title: 'Soy estudiante de la UPDS y deseo reincorporarme',
+      detail:
+        'El primer paso es consultar con el are de Bienestar Estudiantil, si tuviste algún tipo de beca, posteriormente con tu jefe de Carrera para que te ayude a hacer la proyección de materias que llevaras durante el semestre.',
+    },
+    {
+      title: '¿Cómo puedo congelar mi materia?',
+      detail:
+        'Debes comunicarte con Registro para presentar un justificativo que avale tu solicitud, por ejemplo: bole de viaje, certificado de baja médica, certificado de viaje de trabajo, etc. Posteriormente debes presentare con del Decano de tu Facultad.',
+    },
+    {
+      title: 'Para realizar traspaso de Sede',
+      detail:
+        'Debes enviar una carta al are de Archivos de la Universidad Privada Domingo Savio sede Tarija solicitando el traspaso de la sede Tarija a otra sede del país.',
+    },
+    {
+      title:
+        'Para realizar convalidación externa (Cuando el estudiante viene de otra universidad)',
+      detail: `•	Carta de solicitud dirigida a la Universidad Privada Domingo Savio.\n•	Fotocopia simple del carnet de identidad y título de bachiller.\n•	2 ejemplares de certificados de notas originales legalizados.\n•	Programas analíticos legalizados y foliados (fotocopia).\n•	Historial académico legalizado o ficha académica legalizada (fotocopia).\n•	Plan de estudios de la carrera con la carga horaria semestral legalizada.\n•	1 folder amarillo con fastenner y un sobre manila tamaño oficio.\n•	Resolución ministerial de la carrera de la universidad de origen (solo en caso de universidades privadas).`,
+    },
+    {
+      title: '¿Cómo me uno al grupo de WhatsApp de mi materia?',
+      detail:
+        'El enlace a tu grupo de WhatsApp esta disponible en el curso de tu materia en la plataforma Moodle (virtual.upds.edu.bo)',
+    },
+    {
+      title: '¿Cómo puedo ver mis notas en la plataforma?',
+      detail:
+        'Debes ingresar en la pestaña de Calificaciones ubicada en la parte izquierda de la plataforma Moodle',
+    },
+  ];
+
+  const ShowContent = (t: string, c: string) => {
+    setTitle(t);
+    setContent(c);
+  };
+
   return (
     <View style={styles.container}>
       <View
@@ -28,97 +110,78 @@ export const FaqScreen = () => {
         <Text style={styles.titleFaq}>PREGUNTAS FRECUENTES</Text>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} style={{width: '100%'}}>
-        <Item
-          title="¿Hasta qué fecha puedo programar mi materia?"
-          detail="EL tiempo máximo para programar materia es hasta cuatro días desde que inicia el módulo."
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <Button title="Open Modal" onPress={handleOpenModal} />
+        <FaqModal
+          title="Este sera un titulo"
+          content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consectetur convallis aliquet. Nullam facilisis sem id purus interdum, id iaculis odio fermentum. Phasellus ut neque nec ex bibendum aliquam. Integer sollicitudin ligula at mauris egestas, vitae gravida velit fringilla."
+          visible={modalVisible}
+          onClose={handleCloseModal}
         />
-        <Item
-          title="¿Cómo puedo programar mi materia?"
-          detail="Debe visitar el sitio: portal.upds.edu.bo/updsnet luego deberá ingresar a nuestra plataforma con el usuario de Microsoft office 365."
-        />
-        <Item
-          title="Soy estudiante de la UPDS y deseo reincorporarme"
-          detail="El primer paso es consultar con el are de Bienestar Estudiantil, si tuviste algún tipo de beca, posteriormente con tu jefe de Carrera para que te ayude a hacer la proyección de materias que llevaras durante el semestre."
-        />
-        <Item
-          title="¿Cómo puedo congelar mi materia?"
-          detail="Debes comunicarte con Registro para presentar un justificativo que avale tu solicitud, por ejemplo: bole de viaje, certificado de baja médica, certificado de viaje de trabajo, etc. Posteriormente debes presentare con del Decano de tu Facultad."
-        />
-        <Item
-          title="Para realizar traspaso de Sede"
-          detail="Debes enviar una carta al are de Archivos de la Universidad Privada Domingo Savio sede Tarija solicitando el traspaso de la sede Tarija a otra sede del país."
-        />
-        <Item
-          title="Para realizar convalidación externa (Cuando el estudiante viene de otra universidad)"
-          detail={
-            '•	Carta de solicitud dirigida a la Universidad Privada Domingo Savio.\n•	Fotocopia simple del carnet de identidad y título de bachiller.\n•	2 ejemplares de certificados de notas originales legalizados.\n•	Programas analíticos legalizados y foliados (fotocopia).\n•	Historial académico legalizado o ficha académica legalizada (fotocopia).\n•	Plan de estudios de la carrera con la carga horaria semestral legalizada.\n•	1 folder amarillo con fastenner y un sobre manila tamaño oficio.\n•	Resolución ministerial de la carrera de la universidad de origen (solo en caso de universidades privadas).'
-          }
-        />
-        <Item
-          title="¿Cómo me uno al grupo de WhatsApp de mi materia?"
-          detail="El enlace a tu grupo de WhatsApp esta disponible en el curso de tu materia en la plataforma Moodle (virtual.upds.edu.bo)"
-        />
-        <Item
-          title="¿Cómo puedo ver mis notas en la plataforma?"
-          detail="Debes ingresar en la pestaña de Calificaciones ubicada en la parte izquierda de la plataforma Moodle"
-        />
+      </View>
+        <View style={styles.container}>
+          {lista.map((item, index) => (
+            <TouchableOpacity >
+              <MacCard key={index} title={item.title} detail={item.detail} />
+            </TouchableOpacity>
+          ))}
+        </View>
       </ScrollView>
     </View>
   );
 };
-
-interface ItemProps {
-  title: string;
-  detail: string;
-}
-
-function Item({title, detail}: ItemProps) {
-  const [open, setopen] = useState(false);
-  const onPress = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setopen(!open);
-  };
-  return (
-    <TouchableOpacity
-      style={[styles.item, !open && {height: 40}]}
-      onPress={onPress}
-      activeOpacity={1}>
-      <Text style={styles.title}>{title}</Text>
-      {open && (
-        <View>
-          <Text>{detail}</Text>
-        </View>
-      )}
-    </TouchableOpacity>
-  );
-}
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    padding: 20,
-  },
-  item: {
-    width: '100%',
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: globalColors.fourth,
-    paddingHorizontal: 20,
-    overflow: 'hidden',
-    paddingVertical: 10,
-    marginBottom: 5,
-  },
-  title: {
-    fontWeight: 'bold',
-    color: globalColors.primary,
-  },
   titleFaq: {
     color: globalColors.primary,
     fontSize: 20,
     fontWeight: 'bold',
   },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardContainer: {
+    marginVertical: 10,
+  },
+  windowContainer: {
+    width: 250,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    overflow: 'hidden',
+    elevation: 5,
+  },
+  titleBar: {
+    flexDirection: 'row',
+    height: 30,
+    backgroundColor: '#D8503A',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+  },
+  titleBarButton: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: 'white',
+    marginLeft: 5,
+  },
+  content: {
+    padding: 20,
+  },
+  cardTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  cardTextContainer: {
+    maxHeight: 80,
+  },
+  cardText: {
+    fontSize: 12,
+  },
 });
+
 
 // import React, { useState,Component } from 'react';
 // import { View, Text, TouchableOpacity } from 'react-native';

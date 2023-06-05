@@ -47,7 +47,7 @@ export const NoticeScreen = () => {
   return (
     <SafeAreaView
       style={{
-        backgroundColor: 'white',
+        backgroundColor: 'black',//modo oscuro
         alignItems: 'center',
         paddingTop: StatusBar.currentHeight,
       }}>
@@ -84,8 +84,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleNotice: {
-    color: globalColors.primary,
+    // color: globalColors.primary,
     fontSize: 20,
     fontWeight: 'bold',
+    // -
+    color: '#2196f3',
+    textShadowColor: '#2196f3',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
   },
 });

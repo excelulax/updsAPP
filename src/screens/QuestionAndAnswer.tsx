@@ -10,6 +10,7 @@ import {
   View,
   TextInput,
   KeyboardAvoidingView,
+  Modal,
 } from 'react-native';
 import {globalColors} from '../theme/appTheme';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -17,46 +18,52 @@ import {useState, useEffect, useRef} from 'react';
 import {RefObject} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import firestore, { firebase } from '@react-native-firebase/firestore';
+import firestore, {firebase} from '@react-native-firebase/firestore';
 import {getChatMessages, sendMessage} from '../services/ServiceChat';
 import {Message} from '../types/typeMessage';
 import {ActivityIndicator} from 'react-native';
 
 export const QuestionAndAnswer = () => {
-  const [message, setMessage] = useState('');
   const [chatID, setChatID] = useState('');
+  const [deviceID, setDeviceID] = useState('');
+  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const flatListRef: RefObject<FlatList<Message>> = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
-  const db = firestore();
 
-  //--------------------
-  //--------------------
+  const [username, setUsername] = useState('');
+  const [isUsernameSet, setIsUsernameSet] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const db = firestore();
 
   async function getChatId() {
     try {
       const chatId = await AsyncStorage.getItem('chatId');
-      if (chatId) {
-        return chatId;
+      const deviceId = await AsyncStorage.getItem('deviceId');
+      if (chatId && deviceId) {
+        return [chatId, deviceId];
       } else {
         const docRef = await firestore().collection('CHATS').add({});
-        // const registrationToken = await firebase.messaging().getToken();
-        
+        const registrationToken = await firebase.messaging().getToken();
+
         await AsyncStorage.setItem('chatId', docRef.id);
-        // await AsyncStorage.setItem('registrationToken', registrationToken);
+        await AsyncStorage.setItem('deviceId', registrationToken);
+
         await firestore().collection(`CHATS/${docRef.id}/messages`).add({
-          id: '0',
           message:
             '¡Hola! Bienvenido al chat de la Universidad UPDS. ¿En qué podemos ayudarte hoy? ¿Tienes alguna pregunta sobre nuestros programas académicos, proceso de admisión o eventos próximos?',
           isSent: false,
           date: firestore.Timestamp.now(),
+          device: registrationToken,
+          uname: 'UPDS',
         });
-        return docRef.id;
+        return [docRef.id, registrationToken];
       }
     } catch (error) {
       // Manejar errores
     }
   }
+  const showModal=()=>{setIsModalVisible(true)}
 
   async function loadMessages() {
     const chatsRef = db
@@ -72,25 +79,45 @@ export const QuestionAndAnswer = () => {
           message: doc.data().message,
           date: doc.data().date.toDate(),
           isSent: doc.data().isSent,
+          device: doc.data().device,
+          uname: doc.data().uname,
         });
-        // console.log('DATA: ', messagesData);
         setMessages(messagesData);
       });
     });
   }
 
+  async function getUsername() {
+    AsyncStorage.getItem('username').then(name => {
+      if (name) {
+        setUsername(name);
+        setIsUsernameSet(true);
+      } else {
+        setIsModalVisible(true);
+      }
+    });
+  }
+  const handleSaveUsername = async () => {
+    await AsyncStorage.setItem('username', username);
+    // setIsUsernameSet(true);
+    setIsModalVisible(false);
+  };
+
   useEffect(() => {
     async function initChat() {
-      const chatId = await getChatId();
-      if (chatId) {
-        setChatID(chatId);
+      const data = await getChatId();
+      if (data) {
+        setChatID(data[0]);
+        setDeviceID(data[1]);
       }
     }
     initChat();
+    getUsername();
   }, []);
 
   useEffect(() => {
     loadMessages();
+    console.log(chatID);
   }, [chatID]);
 
   const send = async () => {
@@ -101,6 +128,8 @@ export const QuestionAndAnswer = () => {
         message: message.trim(),
         isSent: true,
         date: firestore.Timestamp.now(),
+        device: deviceID,
+        uname: username,
       };
       setMessage('');
       await sendMessage(chatID, newMessage);
@@ -114,6 +143,24 @@ export const QuestionAndAnswer = () => {
         flex: 1,
         padding: 20,
       }}>
+      {/* {!isUsernameSet && ( */}
+        <Modal
+          visible={isModalVisible}
+          animationType="slide"
+          transparent={true}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text>Por favor ingrese su nombre:</Text>
+              <TextInput
+                style={styles.nameInput}
+                value={username}
+                onChangeText={setUsername}
+              />
+              <Button title="Guardar" onPress={handleSaveUsername} />
+            </View>
+          </View>
+        </Modal>
+      {/* )} */}
       <View
         style={{
           alignItems: 'center',
@@ -147,19 +194,26 @@ export const QuestionAndAnswer = () => {
                   styles.messageContainer,
                   item.isSent ? styles.sentMessage : styles.receivedMessage,
                 ]}>
-                <Text style={styles.title}>
-                  {item.isSent ? 'Un random' : 'UPDS'}
-                </Text>
+                <Text style={styles.title}>{item.uname}</Text>
                 <Text style={styles.description}>{item.message}</Text>
               </View>
             </View>
             {item.isSent && (
-              <Image
-                source={{
-                  uri: 'https://www.bootdey.com/img/Content/avatar/avatar7.png',
-                }}
-                style={styles.avatar}
-              />
+              <View
+                style={{
+                  borderRadius: 50,
+                  overflow: 'hidden',
+                  marginHorizontal: 0,
+                }}>
+                <TouchableOpacity onPress={showModal}>
+                  <Image
+                    source={{
+                      uri: 'https://www.bootdey.com/img/Content/avatar/avatar7.png',
+                    }}
+                    style={styles.avatar}
+                  />
+                </TouchableOpacity>
+              </View>
             )}
           </View>
         )}
@@ -220,7 +274,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: 'row',
     paddingVertical: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     backgroundColor: '#fff',
   },
   sentContainer: {
@@ -236,7 +290,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    paddingLeft: 20,
+    paddingLeft: 10,
   },
   sentContent: {
     alignItems: 'flex-end',
@@ -250,6 +304,8 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
+    // color:'#000'
+    color:'#343541'
   },
   messageContainer: {
     paddingVertical: 10,
@@ -266,6 +322,25 @@ const styles = StyleSheet.create({
     color: globalColors.primary,
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+  },
+  nameInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginVertical: 10,
   },
 });
 

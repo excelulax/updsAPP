@@ -18,6 +18,3 @@ const App = () => {
   );
 };
 export default App;
-//npm install -g react-native-cli
-
-//NICOL
