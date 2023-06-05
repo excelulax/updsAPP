@@ -84,8 +84,8 @@ interface Video {
 }
 
 export const SocialMediaScreen = () => {
-  const channelId = 'UCIMMexwtru0uNWBTbV4cYew';
-  const apiKey = 'AIzaSyAmqO6qDlI0VuKTV1Sv7a8EI5Qqdc6ydZg';
+  const channelId = '-------------------------';
+  const apiKey = '------------------------';
 
   const [videos, setVideos] = useState<Video[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
